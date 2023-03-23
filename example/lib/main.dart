@@ -61,7 +61,7 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
         highlightColor: Color(0xFFFF9944),
         navFgColor: Colors.grey.withOpacity(0.5),
         navBgColor: Colors.white,
-        selectedIndex: 1,
+        currentIndex: 1,
       ),
     );
   }
