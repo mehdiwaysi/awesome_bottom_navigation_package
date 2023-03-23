@@ -58,17 +58,19 @@ class AwesomeBottomNav extends StatefulWidget {
   final Color navBgColor;
   final Color navFgColor;
   final ValueSetter<int> onTapped;
+  int selectedIndex;
 
-  const AwesomeBottomNav({
-    Key key,
-    @required this.icons,
-    @required this.highlightedIcons,
-    @required this.highlightColor,
-    @required this.onTapped,
-    @required this.bodyBgColor,
-    @required this.navBgColor,
-    @required this.navFgColor,
-  }) : super(key: key);
+   AwesomeBottomNav(
+      {Key key,
+      @required this.icons,
+      @required this.highlightedIcons,
+      @required this.highlightColor,
+      @required this.onTapped,
+      @required this.bodyBgColor,
+      @required this.navBgColor,
+      @required this.navFgColor,
+      @required this.selectedIndex})
+      : super(key: key);
 
   @override
   _AwesomeBottomNavState createState() => _AwesomeBottomNavState();
@@ -76,7 +78,6 @@ class AwesomeBottomNav extends StatefulWidget {
 
 class _AwesomeBottomNavState extends State<AwesomeBottomNav>
     with SingleTickerProviderStateMixin {
-  int _selectedIndex = 0;
   AnimationController _animationController;
   Animation<double> _posXAnimation;
   Animation<double> _sinkAnimation;
@@ -90,7 +91,7 @@ class _AwesomeBottomNavState extends State<AwesomeBottomNav>
       vsync: this,
     );
     _posXAnimation =
-        Tween<double>(begin: 0.0, end: (_selectedIndex + 1) * 1.0).animate(
+        Tween<double>(begin: 0.0, end: (widget.selectedIndex + 1) * 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: Curves.easeInOutSine,
@@ -109,17 +110,16 @@ class _AwesomeBottomNavState extends State<AwesomeBottomNav>
   }
 
   void _tapped(int index) {
-    if (_selectedIndex == index) return;
+    if (widget.selectedIndex == index) return;
     _animationController.reset();
-    _posXAnimation =
-        Tween<double>(begin: _selectedIndex * 1.0, end: index * 1.0)
-            .animate(CurvedAnimation(
+    _posXAnimation = Tween<double>(begin: widget.selectedIndex * 1.0, end: index * 1.0)
+        .animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOutSine,
     ));
     _animationController.forward();
     setState(() {
-      _selectedIndex = index;
+      widget.selectedIndex = index;
     });
     widget.onTapped(index);
   }
@@ -141,12 +141,12 @@ class _AwesomeBottomNavState extends State<AwesomeBottomNav>
     final singlePadding = totalPadding / (widget.icons.length + 1);
     return ((_animationController.isAnimating
                 ? _posXAnimation.value
-                : _selectedIndex) *
+                : widget.selectedIndex) *
             kNavSize) +
         (singlePadding *
             ((_animationController.isAnimating
                     ? _posXAnimation.value
-                    : _selectedIndex) +
+                    : widget.selectedIndex) +
                 1));
   }
 
@@ -165,7 +165,7 @@ class _AwesomeBottomNavState extends State<AwesomeBottomNav>
             type: MaterialType.circle,
             elevation: 2,
             child: Icon(
-              widget.highlightedIcons[_selectedIndex],
+              widget.highlightedIcons[widget.selectedIndex],
               color: Colors.white,
               size: 30,
             ),
@@ -183,7 +183,7 @@ class _AwesomeBottomNavState extends State<AwesomeBottomNav>
           context: context,
           animatedIndex: _animationController.isAnimating
               ? _posXAnimation.value
-              : _selectedIndex * 1.0,
+              : widget.selectedIndex * 1.0,
           numberOfTabs: widget.icons.length,
         ),
         child: ClipPath(
@@ -192,7 +192,7 @@ class _AwesomeBottomNavState extends State<AwesomeBottomNav>
             context: context,
             animatedIndex: _animationController.isAnimating
                 ? _posXAnimation.value
-                : _selectedIndex * 1.0,
+                : widget.selectedIndex * 1.0,
             numberOfTabs: widget.icons.length,
           ),
           child: Container(
